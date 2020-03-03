@@ -10,7 +10,7 @@
  * version which swaps elvis out to EMS/XMS memory or disk while the child
  * process runs.
  */
-#if 0
+#if defined(GO32)
 # define swapsystem system
 #else
 # include "doexec.h"

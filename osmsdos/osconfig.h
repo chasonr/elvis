@@ -37,7 +37,11 @@
 #undef	FEATURE_MAPDB	/* the map debugger */
 #define	FEATURE_MISC	/* lots of little things */
 #undef	FEATURE_MKEXRC	/* the ":mkexrc" command */
+#ifdef GO32
+#undef  FEATURE_MOUSE
+#else
 #define	FEATURE_MOUSE	/* allow the mouse to be used for selections & tags */
+#endif
 #undef	FEATURE_NORMAL	/* vim-style :normal command */
 #undef	FEATURE_PERSIST	/* the persistfile option */
 #undef	FEATURE_PROTO	/* using aliases to add new protocols */

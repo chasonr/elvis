@@ -176,6 +176,9 @@ static void yieldslice(void)
 	struct SREGS	sregs;
 
 	regs.x.ax = 0x352F;   /* get interrupt vector */
+#ifdef GO32
+	memset(&sregs, 0, sizeof(sregs));
+#endif
 	int86x(0x0021, &regs, &regs, &sregs); /* Get DOS vector for 0x2F */
 
 	if ((regs.x.ax == 0) && (sregs.es == 0)) 
@@ -338,8 +341,10 @@ int ttyread(buf, len, timeout)
  	int	wx, wy;	/* current mouse position within the window */
  static int	px, py;	/* earlier clicked position within the window */
  static char	pe;	/* previous event */
+#endif
 	dosevent_t event;/* a mouse or keyboard event */
 
+#ifdef FEATURE_MOUSE
 	/* mouse should be visible while waiting for event */
 	SetPtrVis(SHOW);
 #endif
