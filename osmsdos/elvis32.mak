@@ -3128,14 +3128,14 @@ OFILES3 = guicurs.o guiopen.o guitcap.o input.o io.o lowbuf.o lp.o lpescape.o lp
 OFILES4 = main.o map.o mark.o message.o misc.o more.o move.o need.o operator.o optglob.o options.o
 OFILES5 = regexp.o region.o regsub.o safe.o scan.o search.o session.o spell.o state.o tinytcap.o
 OFILES6 = url.o vi.o vicmd.o window.o osblock.o osdir.o osprg.o ostext.o tcaphelp.o tag.o
-OFILES7 = tagelvis.o tagsrch.o
+OFILES7 = tagelvis.o tagsrch.o fold.o
 OFILES = $(OFILES1) $(OFILES2) $(OFILES3) $(OFILES4) $(OFILES5) $(OFILES6) $(OFILES7)
 
 $(PROJ).exe: $(OFILES)
 	$(CC) $(LFLAGS) -o $(PROJ).exe $(OFILES)
 
-config.h : osmsdos/osconfig.h
-	copy osmsdos\osconfig.h config.h
+config.h : osmsdos/osconf32.h
+	copy osmsdos\osconf32.h config.h
 
 run: $(PROJ).exe
 	$(PROJ) $(RUNFLAGS)

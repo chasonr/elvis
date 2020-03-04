@@ -221,8 +221,8 @@ OFILES = ref.o safe.o tag.o tagsrch.o
 $(PROJ).exe:	$(OFILES)
 	$(CC) $(LFLAGS) -o $(PROJ).exe $(OFILES)
 
-config.h : osmsdos/osconfig.h
-	copy osmsdos\osconfig.h config.h
+config.h : osmsdos/osconf32.h
+	copy osmsdos\osconf32.h config.h
 
 run: $(PROJ).exe
 	$(PROJ) $(RUNFLAGS)
