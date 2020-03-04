@@ -1,5 +1,23 @@
 /* pcvideo.h */
 
+#if 1
+extern void v_init(void);
+extern void v_reset(void);
+extern void v_cb(void);
+extern void v_cs(void);
+extern void v_ce(void);
+extern void v_cl(void);
+extern void v_al(int n);
+extern void v_dl(int n);
+extern void v_sr(void);
+extern void v_move(int x, int y);
+extern void v_attr(int mask, int bits);
+extern int v_put(int ch);
+extern void v_flush(void);
+extern int v_cols(void);
+extern int v_rows(void);
+#else
+
 /* This file contains functions for a BIOS video interface.  These functions
  * were originally written by Guntram Blohm and Martin Patzel, for elvis 1.x
  * in the "pc.c" file.  Most of them were moved to this file without any
@@ -275,3 +293,5 @@ static void video(ax, cx, dx)
 	if (dx) *dx = regs.x.dx;
 	if (cx) *cx = regs.x.cx;
 }
+
+#endif

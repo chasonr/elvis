@@ -2927,6 +2927,61 @@ TAGSRCH_DEP = elvis.h \
 	spell.h \
 	region.h
 
+PCVIDEO_DEP = elvis.h \
+	config.h \
+	version.h \
+	osmsdos/osdef.h \
+	elvctype.h \
+	safe.h \
+	options.h \
+	optglob.h \
+	session.h \
+	lowbuf.h \
+	message.h \
+	buffer.h \
+	mark.h \
+	buffer2.h \
+	scan.h \
+	opsys.h \
+	map.h \
+	gui.h \
+	display.h \
+	draw.h \
+	state.h \
+	window.h \
+	spell.h \
+	color.h \
+	options2.h \
+	gui2.h \
+	display2.h \
+	draw2.h \
+	state2.h \
+	event.h \
+	input.h \
+	vi.h \
+	regexp.h \
+	ex.h \
+	move.h \
+	vicmd.h \
+	operator.h \
+	cut.h \
+	elvisio.h \
+	lp.h \
+	calc.h \
+	more.h \
+	digraph.h \
+	tag.h \
+	tagsrch.h \
+	tagelvis.h \
+	descr.h \
+	need.h \
+	misc.h \
+	message2.h \
+	fold.h \
+	autocmd.h \
+	region.h \
+	osmsdos\pcvideo.h
+
 
 all:	$(PROJ).exe
 
@@ -3113,6 +3168,9 @@ ostext.o:	osmsdos/ostext.c $(OSTEXT_DEP)
 tcaphelp.o:	osmsdos/tcaphelp.c $(TCAPHELP_DEP)
 	$(CC) $(CFLAGS) -c osmsdos/tcaphelp.c
 
+pcvideo.o: osmsdos/pcvideo.c $(PCVIDEO_DEP)
+	$(CC) $(CFLAGS) -c osmsdos/pcvideo.c
+
 tag.o:	tag.c $(TAG_DEP)
 	$(CC) $(CFLAGS) -c tag.c
 
@@ -3128,7 +3186,7 @@ OFILES3 = guicurs.o guiopen.o guitcap.o input.o io.o lowbuf.o lp.o lpescape.o lp
 OFILES4 = main.o map.o mark.o message.o misc.o more.o move.o need.o operator.o optglob.o options.o
 OFILES5 = regexp.o region.o regsub.o safe.o scan.o search.o session.o spell.o state.o tinytcap.o
 OFILES6 = url.o vi.o vicmd.o window.o osblock.o osdir.o osprg.o ostext.o tcaphelp.o tag.o
-OFILES7 = tagelvis.o tagsrch.o fold.o
+OFILES7 = tagelvis.o tagsrch.o pcvideo.o fold.o
 OFILES = $(OFILES1) $(OFILES2) $(OFILES3) $(OFILES4) $(OFILES5) $(OFILES6) $(OFILES7)
 
 $(PROJ).exe: $(OFILES)

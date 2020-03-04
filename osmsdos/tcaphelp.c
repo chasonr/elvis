@@ -118,6 +118,10 @@ void ttyraw(erasekey)
 		if (origraw & DEVICE)
 			(void)elvioctl(1, SETRAW, origraw | RAW);
 	}
+	else
+	{
+		v_init();
+	}
 	(void)elvioctl(1, SETBRK, 0);
 	signal(SIGINT, catchsig);
 
@@ -144,6 +148,7 @@ void ttynormal()
 		v_put('\r');
 		v_put('\n');
 		v_ce();
+		v_reset();
 	}
 	else
 	{
@@ -692,6 +697,7 @@ static	ELVBOOL colored;	/* explicit colors set? (disables uvid) */
 			}
 		}
 	}
+	v_flush();
 }
 
 
