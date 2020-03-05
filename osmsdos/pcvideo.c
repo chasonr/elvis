@@ -9,6 +9,9 @@
 #include "elvis.h"
 #include "pcvideo.h"
 
+#define VIDEO_WIDTH  1024
+#define VIDEO_HEIGHT  768
+
 /*
  * The functions are:
  *      v_init()                Switch to the correct graphics mode
@@ -440,12 +443,26 @@ static void find_mode(void)
 	unsigned size, size0;
 	struct ModeInfoBlock mode_info0;
 	unsigned long mode_addr;
+	unsigned target_width, target_height;
+	unsigned pass;
 	__dpmi_regs regs;
 
-	/* We'll use standard VGA mode 0x0012 if nothing preferable is found */
-	mode_num = 0x0012;
-	size = 640 * 480;
-	mode_info.BitsPerPixel = 4;
+	mode_num = 0xFFFF;
+	size = 0;
+
+	/* Set target screen size */
+	const char *str = getenv("ELVIS_COLS");
+	target_width = 0;
+	if (str != NULL)
+		target_width = strtol(str, NULL, 10) * CHAR_WIDTH;
+	if (target_width == 0)
+		target_width = VIDEO_WIDTH;
+	str = getenv("ELVIS_ROWS");
+	target_height = 0;
+	if (str != NULL)
+		target_height = strtol(str, NULL, 10) * CHAR_HEIGHT;
+	if (target_height == 0)
+		target_height = VIDEO_HEIGHT;
 
 	/* Allocate transfer areas in DOS memory */
 	vbe_info_seg = __dpmi_allocate_dos_memory(
@@ -476,82 +493,114 @@ static void find_mode(void)
 	if (memcmp(vbe_info.VbeSignature, "VESA", 4) != 0) goto end;
 	vbe_version = vbe_info.VbeVersion;
 
-	/* Get the address of the mode list */
-	/* The mode list may be within the DOS memory area allocated above.
-	   That area must remain allocated and must not be rewritten until
-	   we're done here. */
-	mode_addr = (vbe_info.VideoModePtr >> 16) * 16L
-	          + (vbe_info.VideoModePtr & 0xFFFF);
-
-	/* Scan through the modes; look for an acceptable mode with the most
-	   pixels and the fewest bits per pixel */
-	while (1)
+	for (pass = 0; pass < 2 && mode_num == 0xFFFF; ++pass)
 	{
-		/* Retrieve mode number, and stop when the sentinel is found */
-		mode_num0 = _farpeekw(_go32_conventional_mem_selector(),
-		        mode_addr);
-		if (mode_num0 == 0xFFFF)
-			break;
-		mode_addr += 2;
-
-		/* Retrieve mode information */
-		memset(&regs, 0, sizeof(regs));
-		regs.x.ax = 0x4F01;
-		regs.x.cx = mode_num0;
-		regs.x.di = 0;
-		regs.x.es = mode_info_seg;
-		__dpmi_int(0x10, &regs);
-
-		/* Check that the mode is acceptable */
-		if (regs.x.ax != 0x004F)
-			continue;
-		dosmemget(mode_info_seg * 16L, sizeof(mode_info0), &mode_info0);
-
-		/* Supported, graphics mode, color, VGA compatible */
-		if ((mode_info0.ModeAttributes & 0x79) != 0x19)
-			continue;
-		/* Provide resolution etc. for old BIOSes */
-		if (!fill_old_info(mode_num0, &mode_info0))
-			continue;
-		/* Bits per pixel and memory model are acceptable */
-		switch (mode_info0.BitsPerPixel)
+		if (pass == 1)
 		{
-		case 4:
-			if (mode_info0.MemoryModel != 3) /* Planar */
-				continue;
-			if (mode_info0.NumberOfPlanes != 4)
-				continue;
-			break;
-
-		case 8:
-			if (mode_info0.MemoryModel != 4) /* Packed pixel */
-				continue;
-			if (mode_info0.NumberOfPlanes != 1)
-				continue;
-			break;
-
-		case 15:
-		case 16:
-		case 24:
-		case 32:
-			if (mode_info0.MemoryModel != 6) /* Direct color */
-				continue;
-			if (mode_info0.NumberOfPlanes != 1)
-				continue;
-			break;
-
-		default:
-			continue;
+			/* We'll use standard VGA mode 0x0012 if nothing preferable is found */
+			mode_num = 0x0012;
+			size = 640 * 480;
+			mode_info.BitsPerPixel = 4;
 		}
 
-		/* Compare size and pixel depth to that of currently selected mode */
-		size0 = mode_info0.XResolution * mode_info0.YResolution;
-		if (size0 > size
-		||  (size0 == size && score(mode_info0.BitsPerPixel) < score(mode_info.BitsPerPixel)))
+		/* Get the address of the mode list */
+		/* The mode list may be within the DOS memory area allocated above.
+		   That area must remain allocated and must not be rewritten until
+		   we're done here. */
+		mode_addr = (vbe_info.VideoModePtr >> 16) * 16L
+			  + (vbe_info.VideoModePtr & 0xFFFF);
+
+		/* Scan through the modes; look for an acceptable mode with the most
+		   pixels and the fewest bits per pixel */
+		while (1)
 		{
-			mode_num = mode_num0;
-			size = size0;
-			mode_info = mode_info0;
+			/* Retrieve mode number, and stop when the sentinel is found */
+			mode_num0 = _farpeekw(_go32_conventional_mem_selector(),
+				mode_addr);
+			if (mode_num0 == 0xFFFF)
+				break;
+			mode_addr += 2;
+
+			/* Retrieve mode information */
+			memset(&regs, 0, sizeof(regs));
+			regs.x.ax = 0x4F01;
+			regs.x.cx = mode_num0;
+			regs.x.di = 0;
+			regs.x.es = mode_info_seg;
+			__dpmi_int(0x10, &regs);
+
+			/* Check that the mode is acceptable */
+			if (regs.x.ax != 0x004F)
+				continue;
+			dosmemget(mode_info_seg * 16L, sizeof(mode_info0), &mode_info0);
+
+			/* Supported, graphics mode, color, VGA compatible */
+			if ((mode_info0.ModeAttributes & 0x79) != 0x19)
+				continue;
+			/* Provide resolution etc. for old BIOSes */
+			if (!fill_old_info(mode_num0, &mode_info0))
+				continue;
+			/* Bits per pixel and memory model are acceptable */
+			switch (mode_info0.BitsPerPixel)
+			{
+			case 4:
+				if (mode_info0.MemoryModel != 3) /* Planar */
+					continue;
+				if (mode_info0.NumberOfPlanes != 4)
+					continue;
+				break;
+
+			case 8:
+				if (mode_info0.MemoryModel != 4) /* Packed pixel */
+					continue;
+				if (mode_info0.NumberOfPlanes != 1)
+					continue;
+				break;
+
+			case 15:
+			case 16:
+			case 24:
+			case 32:
+				if (mode_info0.MemoryModel != 6) /* Direct color */
+					continue;
+				if (mode_info0.NumberOfPlanes != 1)
+					continue;
+				break;
+
+			default:
+				continue;
+			}
+
+			/* Compare size and pixel depth to that of currently selected mode */
+			size0 = mode_info0.XResolution * mode_info0.YResolution;
+			if (pass == 0)
+			{
+				/* Consider only modes at least
+				   target_width*target_height, and choose the
+				   smallest */
+				if (mode_info0.XResolution < target_width
+				||  mode_info0.YResolution < target_height)
+					continue;
+				if ((size0 < size || mode_num == 0xFFFF)
+				||  (size0 == size && score(mode_info0.BitsPerPixel) < score(mode_info.BitsPerPixel)))
+				{
+					mode_num = mode_num0;
+					size = size0;
+					mode_info = mode_info0;
+				}
+			}
+			else
+			{
+				/* No mode at least target_width*target_height.
+				   Use the largest mode. */
+				if (size0 > size
+				||  (size0 == size && score(mode_info0.BitsPerPixel) < score(mode_info.BitsPerPixel)))
+				{
+					mode_num = mode_num0;
+					size = size0;
+					mode_info = mode_info0;
+				}
+			}
 		}
 	}
 
