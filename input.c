@@ -871,7 +871,7 @@ static RESULT perform(win)
 		/* Copy the text.  Be careful not to change the "top" mark. */
 		from = *state->top;
 		tmp = cutput((ii->cmd == INP_PUT ? '1' : '.'),
-					win, cursor, ElvFalse, ElvTrue, ElvTrue);
+					win, cursor, 1L, ElvFalse, ElvTrue, ElvTrue);
 		marksetoffset(state->top, markoffset(&from));
 
 		/* if successful, tweak the "cursor" and "bottom" marks. */

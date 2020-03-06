@@ -301,7 +301,7 @@ RESULT oper(win, vinf, from, to)
 		if (dot)
 		{
 			/* replace the text with previous input */
-			curs = cutput('.', win, from, ElvFalse, ElvTrue, ElvTrue);
+			curs = cutput('.', win, from, 1L, ElvFalse, ElvTrue, ElvTrue);
 
 			/* if line mode, then append a newline */
 			if (vinf->tweak & TWEAK_LINE)

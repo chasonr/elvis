@@ -2856,7 +2856,7 @@ static RESULT execute(xinf)
 						 &xinf->putbacktop, 0L,
 						 xinf->putbackleft, ElvFalse);
 		pline = markdup(pline);
-		cutput('_', xinf->window, pline, ElvFalse, ElvFalse, ElvFalse);
+		cutput('_', xinf->window, pline, xinf->count, ElvFalse, ElvFalse, ElvFalse);
 		markfree(pline);
 		o_report = oldreport;
 

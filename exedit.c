@@ -391,7 +391,7 @@ RESULT	ex_put(xinf)
 {
 	MARK	newcurs;
 
-	newcurs = cutput(xinf->cutbuf, xinf->window, xinf->fromaddr, (ELVBOOL)(xinf->from > 0), ElvFalse, ElvFalse);
+	newcurs = cutput(xinf->cutbuf, xinf->window, xinf->fromaddr, xinf->count, (ELVBOOL)(xinf->from > 0), ElvFalse, ElvFalse);
 	if (newcurs)
 	{
 		xinf->newcurs = markdup(newcurs);

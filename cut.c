@@ -518,10 +518,11 @@ void cutyank(cbname, from, to, type, sideeffect)
 /* This function pastes text that was yanked by cutyank.  Returns NULL on
  * errors, or the final cursor position if successful.
  */
-MARK cutput(cbname, win, at, after, cretend, lretend)
+MARK cutput(cbname, win, at, count, after, cretend, lretend)
 	_CHAR_	cbname;	/* cut buffer name */
 	WINDOW	win;	/* window showing that buffer */
 	MARK	at;	/* where to insert the text */
+	long	count;	/* Number of times to insert */
 	ELVBOOL	after;	/* if ElvTrue, insert after "at"; else insert before */
 	ELVBOOL	cretend;/* if character-mode: ElvTrue=return first, ElvFalse=return last */
 	ELVBOOL	lretend;/* if not character-mode: ElvTrue=return first, ElvFalse=return last */
@@ -529,12 +530,16 @@ MARK cutput(cbname, win, at, after, cretend, lretend)
 	BUFFER	src;
 	CHAR	iobuf[1000];
 	CHAR	*cp;
-	MARKBUF	sfrom, sto;
+	MARKBUF	sfrom, sto, end;
 	static MARKBUF ret;
 	int	i;
 	long	line, col, len;
+	long	times;
 	ELVBOOL	cmd;
 	long     location;
+
+	if (count == 0)
+	    count = 1;
 
 	/* If anonymous buffer, and most recent paste was from a numbered
 	 * cut buffer, then use the successive numbered buffer by default.
@@ -610,15 +615,21 @@ MARK cutput(cbname, win, at, after, cretend, lretend)
 		{
 			markaddoffset(&ret, 1);
 		}
+		end = ret;
 
-		/* paste it & set "ret" to the new cursor cursor */
+		/* paste it & set "end" to the new cursor cursor */
 		len = o_bufchars(src);
 		if (o_partiallastline(src))
 			len--;
-		bufpaste(&ret, marktmp(sfrom, src, 0L), marktmp(sto, src, len));
+		for (times = 0; times < count; ++times)
+		{
+			bufpaste(&end, marktmp(sfrom, src, 0L), marktmp(sto, src, len));
+			markaddoffset(&end, len);
+		}
+		markaddoffset(&end, -1);
 		if (cretend)
 		{
-			markaddoffset(&ret, len - 1);
+			ret = end;
 		}
 		break;
 
@@ -633,13 +644,17 @@ MARK cutput(cbname, win, at, after, cretend, lretend)
 		{
 			ret = *(win->md->move)(win, at, 0, 0, ElvFalse);
 		}
+		end = ret;
 
-		/* paste it & set "ret" to the start of the new cursor line */
-		bufpaste(&ret, marktmp(sfrom, src, 0L), marktmp(sto, src, o_bufchars(src)));
+		/* paste it & set "end" to the start of the new cursor line */
+		for (times = 0; times < count; ++times)
+		{
+			bufpaste(&end, marktmp(sfrom, src, 0L), marktmp(sto, src, o_bufchars(src)));
+			markaddoffset(&end, o_bufchars(src));
+		}
 		if (lretend)
 		{
-			markaddoffset(&ret, o_bufchars(src));
-			ret = *(win->md->move)(win, &ret, -1, 0, ElvTrue);
+			ret = *(win->md->move)(win, &end, -1, 0, ElvTrue);
 		}
 
 		/* move new cursor past any whitespace at start of line */
@@ -679,7 +694,8 @@ MARK cutput(cbname, win, at, after, cretend, lretend)
 			(void)marktmp(sto, src, lowline(bufbufinfo(src), line + 1) - 1);
 
 			/* paste it */
-			bufpaste(&ret, &sfrom, &sto);
+			for (times = 0; times < count; ++times)
+				bufpaste(&ret, &sfrom, &sto);
 
 			/* move to the next line in destination buffer */
 			ret = *(*win->md->move)(win, &ret, 1, col, cmd);

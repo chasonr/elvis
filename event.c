@@ -561,7 +561,7 @@ WATCH(fprintf(stderr, "eventclick(..., row=%d, column=%d, what=%d)\n", row, colu
 			bufwilldo(win->state->cursor, ElvTrue);
 
 		/* paste the text */
-		newcurs = cutput((_CHAR_)'^', win, win->state->cursor, ElvFalse, ElvTrue, ElvTrue);
+		newcurs = cutput((_CHAR_)'^', win, win->state->cursor, 1L, ElvFalse, ElvTrue, ElvTrue);
 		if (newcurs)
 		{
 			/* newcurs is normally at the last character, but we

@@ -224,7 +224,7 @@ RESULT v_input(win, vinf)
 		tmp = win->state->cursor;
 		do
 		{
-			tmp = cutput('.', win, tmp, ElvFalse, ElvTrue, ElvTrue);
+			tmp = cutput('.', win, tmp, 1L, ElvFalse, ElvTrue, ElvTrue);
 			if (!tmp) return RESULT_ERROR;
 			markaddoffset(tmp, 1);
 			vinf->count--;
@@ -976,11 +976,11 @@ RESULT v_paste(win, vinf)
 	 */
 	if ((vinf->tweak & TWEAK_DOTTING) != 0 && elvdigit(vinf->cutbuf))
 	{
-		dest = cutput('\0', win, win->state->cursor, (ELVBOOL)(vinf->command == 'p'), ElvTrue, ElvFalse);
+		dest = cutput('\0', win, win->state->cursor, vinf->count, (ELVBOOL)(vinf->command == 'p'), ElvTrue, ElvFalse);
 	}
 	else
 	{
-		dest = cutput(vinf->cutbuf, win, win->state->cursor, (ELVBOOL)(vinf->command == 'p'), ElvTrue, ElvFalse);
+		dest = cutput(vinf->cutbuf, win, win->state->cursor, vinf->count, (ELVBOOL)(vinf->command == 'p'), ElvTrue, ElvFalse);
 	}
 
 	/* check for failure or success. */
