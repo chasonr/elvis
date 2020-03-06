@@ -608,10 +608,12 @@ end:
 
 	if (vbe_info_sel != -1)
 		__dpmi_free_dos_memory(vbe_info_sel);
-	if (vbe_info_sel != -1)
+	if (mode_info_sel != -1)
 		__dpmi_free_dos_memory(mode_info_sel);
 
 	/* If no preferable mode is found, fill in information for mode 0x0012 */
+	if (mode_num == 0xFFFF)
+		mode_num = 0x0012;
 	if (mode_num == 0x0012)
 	{
 		mode_info.ModeAttributes = 0x1F;
@@ -1072,7 +1074,7 @@ static void render_text_8(unsigned row, unsigned col, unsigned count)
 static unsigned move_window(unsigned win, unsigned long addr)
 {
 	unsigned long pos = win_offset[win];
-	if (addr < pos || pos + mode_info.WinSize <= addr)
+	if (addr < pos || pos + (mode_info.WinSize * 1024) <= addr)
 	{
 		/* Given address is not within the current window */
 		__dpmi_regs regs;
