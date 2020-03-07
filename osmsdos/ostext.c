@@ -6,6 +6,9 @@
 #include <fcntl.h>
 #include <io.h>
 #include <errno.h>
+#ifdef GO32
+# include <unistd.h>
+#endif
 
 /* Microsoft has an annoying habit of adding underscores to the front of
  * conventional names.

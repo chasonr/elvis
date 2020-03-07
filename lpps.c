@@ -423,7 +423,7 @@ static void fontch(font, ch)
 	_char_	font;	/* font of the next character from text image */
 	_CHAR_	ch;	/* the next character */
 {
-	char	buf[10];
+	char	buf[12];
 
 	if (font == 0)
 		font = 1;

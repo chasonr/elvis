@@ -2127,7 +2127,6 @@ static RESULT parse(win, refp, xinf)
 	CHAR	*p2;	/* a second scanning variable */
 	CHAR	*lntext;/* text of current line, used for trace */
 	RESULT	result;	/* result of parsing */
-	ELVBOOL	twoaddrs;/* have two addresses been seen on this line? */
 	int	i;
 	MARK	m;
 #ifdef FEATURE_MAPDB
@@ -2160,7 +2159,6 @@ static RESULT parse(win, refp, xinf)
 	/* set defaults */
 	memset((char *)xinf, 0, sizeof *xinf);
 	xinf->window = win;
-	twoaddrs = ElvFalse;
 
 	/* skip leading ':' characters and whitespace */
 	while (*refp && (**refp == ':' || **refp == ' ' || **refp == '\t'))
@@ -2266,10 +2264,6 @@ static RESULT parse(win, refp, xinf)
 					xinf->from = xinf->to;
 					xinf->anyaddr = ElvTrue;
 				}
-				else
-				{
-					twoaddrs = ElvTrue;
-				}
 
 				/* if followed by a semicolon, then this
 				 * address becomes default.
@@ -2339,7 +2333,6 @@ static RESULT parse(win, refp, xinf)
 				xinf->to = markline(xinf->window->selbottom);
 			}
 			xinf->anyaddr = ElvTrue;
-			twoaddrs = ElvTrue;
 			sel = ElvTrue;
 
 		}

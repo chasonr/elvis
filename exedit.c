@@ -227,7 +227,8 @@ RESULT	ex_join(xinf)
 		/* if newline, then clobber it */
 		if (*cp == '\n')
 		{
-			start = markdup(scanmark(&cp));
+			MARKBUF *sm = scanmark(&cp);
+			start = markdup(sm);
 			offset = markoffset(start);
 			if (scannext(&cp))
 			{
@@ -246,7 +247,7 @@ RESULT	ex_join(xinf)
 				}
 
 				/* Find the end mark */
-				end = (cp ? markdup(scanmark(&cp))
+				end = (cp ? (sm = scanmark(&cp), markdup(sm))
 					  : markalloc(markbuffer(start), o_bufchars(markbuffer(start))));
 
 				/* free the scan context during the change;

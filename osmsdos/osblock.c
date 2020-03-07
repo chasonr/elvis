@@ -6,6 +6,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include "elvis.h"
+#ifdef GO32
+# include <unistd.h>
+#endif
 #ifdef FEATURE_RAM
 # include <vmemory.h>
 #endif
@@ -158,7 +161,7 @@ ELVBOOL blkopen(ELVBOOL force, BLK *buf)
 	{
 		if (errno == ENOENT)
 		{
-			fd = open(o_session, O_RDWR|O_CREAT|O_EXCL|O_BINARY, 0600);
+			fd = open((char *)o_session, O_RDWR|O_CREAT|O_EXCL|O_BINARY, 0600);
 			if (fd >= 0)
 			{
 				if (write(fd, (char *)buf, (unsigned)o_blksize) < o_blksize)

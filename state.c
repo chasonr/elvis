@@ -445,8 +445,10 @@ RESULT statekey(key)
 		{
 		  case 's': key &= 0x7f;		break;
 		  case 'n': key = '.';			break;
-		  case 'm': if (key>0x7f && key<=0x9f)
-				key = '.';		break;
+		  case 'm':
+			if (key>0x7f && key<=0x9f)
+				key = '.';
+			break;
 		}
 		if (elvcntrl(key))
 		{

@@ -127,9 +127,9 @@ int prgwrite(CHAR *buf, int nbytes)
  */
 ELVBOOL prggo(void)
 {
-	int	old0;	/* elvis' stdin */
-	int	old1;	/* elvis' stdout */
-	int	old2;	/* elvis' stderr */
+	int	old0 = -1;	/* elvis' stdin */
+	int	old1 = -1;	/* elvis' stdout */
+	int	old2 = -1;	/* elvis' stderr */
 	CHAR	*arg[3];/* arguments when evaluating command string */
 
 	/* are we supposed to redirect stdin? */

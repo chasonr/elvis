@@ -1910,7 +1910,6 @@ RESULT vinormal(win, nkeys, keys)
 	CHAR	*keys;	/* the keystrokes to run */
 {
 	STATE	*ex;	/* ex input state, or NULL if none */
-	STATE	*top;	/* the state that ex acted on */
 	STATE	*vi;	/* the newly-pushed vi command interpreter used here */
 	int	i;
 	RESULT	result;
@@ -1926,9 +1925,6 @@ RESULT vinormal(win, nkeys, keys)
 	}
 	else
 		ex = NULL;
-
-	/* remember the top of the stack, so we can restore the stack later */
-	top = win->state;
 
 	/* push a vi command interpreter onto the input state stack */
 	vipush(win, 0, NULL);

@@ -296,7 +296,7 @@ int guikeylabel(given, givenlen, label, rawptr)
 	CHAR	**label; /* where to store a pointer to the symbolic name */
 	CHAR	**rawptr;/* where to store a pointer to the raw characters */
 {
-	int	rawlen, labellen, i;
+	int	rawlen = 0, labellen, i;
 	CHAR	*scan;
 	static CHAR *build;
 	CHAR	*symlabel, *symraw;

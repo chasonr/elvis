@@ -477,13 +477,11 @@ static void persistload(buf)
 	CHAR	*external;
 #ifdef FEATURE_REGION
 	ELVBOOL	doregions;	/* supposed to load regions? */
-	int	regions;	/* found number of regions */
 	_char_	face;
 	char	facename[50];
 #endif
 #ifdef FEATURE_FOLD
 	ELVBOOL	dofolds;	/* supposed to load folds? */
-	int	folds;		/* found number of folds */
 	FOLD	newfold;
 #endif
 #if defined(FEATURE_REGION) || defined(FEATURE_FOLD)
@@ -532,12 +530,6 @@ static void persistload(buf)
 	/* For each line... */
 	cursor = change = -1L;
 	hours = 0;
-#ifdef FEATURE_REGION
-	regions = 0;
-#endif
-#ifdef FEATURE_FOLD
-	folds = 0;
-#endif
 	skip = ElvTrue;
 	while ((line = persistget()) != NULL)
 	{
@@ -887,7 +879,7 @@ static void persistbuf(buf, persbuf)
 #endif
 
 	/* always start with a "bufname" line, and timestamp */
-	sprintf(line, "bufname %.289s\nhours %s\n",
+	sprintf(line, "bufname %.264s\nhours %.19s\n",
 		o_bufname(buf), dirtime(NULL));
 	bufappend(persbuf, toCHAR(line), 0);
 
@@ -1107,7 +1099,7 @@ void bufpersistsave(buf)
 	bufwrite(marktmp(head, persbuf, 0),
 	         marktmp(tail, persbuf, o_bufchars(persbuf)), 
 		 iofilename(tochar8(o_persistfile), '\0'), ElvTrue);
-	(void)msghide(ElvFalse);
+	(void)msghide(oldhide);
 }
 #endif /* FEATURE_PERSIST */
 

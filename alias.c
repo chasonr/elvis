@@ -26,6 +26,9 @@
 #include <stdlib.h>
 #include <process.h>
 #include <io.h>
+#ifdef GO32
+# include <unistd.h>
+#endif
 #include "osdef.h"
 
 /* This is the name of the real elvis program, with the directory name or
@@ -59,7 +62,7 @@
 
 
 
-main(argc, argv)
+int main(argc, argv)
 	int	argc;
 	char	*argv[];
 {

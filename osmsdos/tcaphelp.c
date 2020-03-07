@@ -24,6 +24,9 @@ char id_tcaphelp[] = "$Id: tcaphelp.c,v 2.32 2003/10/17 17:41:23 steve Exp $";
 # include <io.h>
 # include <conio.h>
 # include <signal.h>
+#ifdef GO32
+# include <unistd.h>
+#endif
 # include "pcvideo.h"
 
 # ifdef FEATURE_MOUSE
@@ -374,8 +377,8 @@ int ttyread(buf, len, timeout)
 			got += x;
 			break;
 
-#ifdef FEATURE_MOUSE
 		  case EvMouse:
+#ifdef FEATURE_MOUSE
 			/* which window was clicked? */
 			gw = ttywindow((int)y, (int)x, &wy, &wx);
 			if (!gw || (selgw && selgw != gw))
@@ -432,8 +435,11 @@ int ttyread(buf, len, timeout)
 			  	selgw = NULL;
 				pe = 'r';
 			}
-			break;
 #endif
+			break;
+
+		  case EvTimeout:
+			break;
 		}
 
 		/* After the first pass, we want to use the shorted possible

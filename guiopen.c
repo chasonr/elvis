@@ -7,7 +7,7 @@
 char id_guiopen[] = "$Id: guiopen.c,v 2.30 2003/10/17 17:41:23 steve Exp $";
 #endif
 #ifdef GUI_OPEN
-# if ANY_UNIX
+# if ANY_UNIX || defined(GO32)
 #  include <unistd.h>
 # else
 #  include <io.h>
@@ -151,7 +151,6 @@ static void scriptloop()
 {
 	BUFFER	script;
 	MARKBUF	start, end;
-	RESULT	result;
 	char	inbuf[1024];
 	long	n;
 
@@ -171,7 +170,7 @@ static void scriptloop()
 
 	/* execute the script */
 	eventfocus(current, ElvTrue);
-	result = experform(windefault, marktmp(start, script, 0L),
+	(void)experform(windefault, marktmp(start, script, 0L),
 				    marktmp(end, script, o_bufchars(script)));
 
 	/* destroy the window (if the script didn't do that already) */

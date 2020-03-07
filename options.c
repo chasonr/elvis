@@ -1114,7 +1114,10 @@ static OPTSTK *restorelocal(item)
 	OPTDESC	*desc = &item->desc[item->i];
 	OPTVAL	*val = &item->val[item->i];
 	OPTDOMAIN *d;
-	ELVBOOL	newbool, changed = ElvFalse;
+	ELVBOOL	newbool;
+#ifdef FEATURE_AUTOCMD
+	ELVBOOL changed = ElvFalse;
+#endif
 	BUFFER	b;
 
 	/* verify that the option is still active */
@@ -1152,13 +1155,19 @@ static OPTSTK *restorelocal(item)
 
 			{
 				if (!desc->store || (*desc->store)(desc, val, stack->value) != 0)
+				{
+#ifdef FEATURE_AUTOCMD
 					changed = ElvTrue;
+#endif
+				}
 			}
 		}
 		else
 		{
 			newbool = calctrue(stack->value);
+#ifdef FEATURE_AUTOCMD
 			changed = (ELVBOOL)(newbool != val->value.boolean);
+#endif
 			val->value.boolean = newbool;
 		}
 

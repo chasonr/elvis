@@ -95,7 +95,9 @@ static void ttyflush(void);
 static void ttygetsize(void);
 static ELVBOOL ttyprgopen(char *command, ELVBOOL willwrite, ELVBOOL willread);
 static int ttyprgclose(void);
+#ifdef SIGSTOP
 static RESULT stop(ELVBOOL alwaysfork);
+#endif
 #endif
 
 static void reset P_((void));

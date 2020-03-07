@@ -14,7 +14,9 @@ EXCTLSTATE exctlstate;
 
 static MAPFLAGS maphelp2 P_((CHAR **refcp, char *word, MAPFLAGS flag));
 static MAPFLAGS maphelp P_((CHAR **refcp, CHAR **mode));
+#ifdef FEATURE_EQUALTILDE
 static CHAR *equaltilde P_((CHAR *value, int len, CHAR	*cmd));
+#endif
 
 
 #ifdef FEATURE_ALIAS
@@ -960,7 +962,7 @@ RESULT ex_message(xinf)
 	if (!xinf->rhs)
 	{
 		/* no - fake it for :error, else just return */
-		if (xinf->command == MSG_ERROR)
+		if (xinf->command == EX_ERROR)
 			xinf->rhs = CHARdup(toCHAR("error"));
 		else
 			return result;
@@ -2058,7 +2060,7 @@ RESULT	ex_set(xinf)
 			}
 			oldval = outbuf + i + 1;
 			CHARncpy(oldval, value, QTY(outbuf) - 100);
-			oldval[QTY(oldval) - 100] = '\0';
+			oldval[QTY(outbuf) - 100] = '\0';
 
 			/* parse the subscript -- it will be alphanumeric */
 			if (xinf->rhs[i] == '.')

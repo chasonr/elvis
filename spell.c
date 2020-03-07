@@ -615,7 +615,7 @@ void spellhighlight(win)
 	MARKBUF	mark;
 	int	i, bottom;
 	int	offset;
-	char	newfont, combofont;
+	char	newfont;
 	long	end;
 	CHAR	*cp;
 	spellresult_t result;
@@ -710,7 +710,7 @@ void spellhighlight(win)
 					newfont |= o_hasfocus(win)
 						? COLOR_FONT_NORMAL
 						: COLOR_FONT_IDLE;
-				combofont = win->di->newfont[i] =
+				win->di->newfont[i] =
 						colortmp(newfont, spellfont);
 				i++;
 			}

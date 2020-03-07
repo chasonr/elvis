@@ -380,14 +380,18 @@ void winresize(win, rows, columns)
 	long	columns;/* new width of the window */
 {
 	MARKBUF	oldtop;
+#ifdef FEATURE_AUTOCMD
 	CHAR	*changed;
+#endif
 
 	/* update the options */
+#ifdef FEATURE_AUTOCMD
 	changed = NULL;
 	if (o_lines(win) != rows)
 		changed = toCHAR("lines");
 	else if (o_columns(win) != columns)
 		changed = toCHAR("columns");
+#endif
 	o_lines(win) = rows;
 	o_columns(win) = columns;
 	if (!(optflags(o_scroll(win)) & OPT_SET))

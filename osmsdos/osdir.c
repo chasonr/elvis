@@ -24,6 +24,7 @@ extern unsigned _stklen = 16384U;
 #ifdef GO32
 # include <dir.h>
 # include <fcntl.h>
+# include <unistd.h>
 #endif
 #ifdef M_I86
 # include <direct.h>
@@ -169,7 +170,9 @@ char *dirfirst(char *wildexpr, ELVBOOL ispartial)
  */
 char *dirnext(void)
 {
+#ifndef JUST_DIRFIRST
 	char	*scan;
+#endif
 
 	/* if previous call returned NULL, then return NULL again. */
 	if (!found[0])
@@ -314,7 +317,7 @@ char *dirfile(char *pathname)
 char *dirtime(filename)
 	char	*filename;	/* filename to check */
 {
-	static char	str[20];/* "YYYY-MM-DDThh:mm:ss\0" */
+	static char	str[60];/* "YYYY-MM-DDThh:mm:ss\0" */
 	time_t		when;	/* the date/time */
 	struct stat	st;	/* holds info from timestamp */
 	struct tm	*tp;	/* time, broken down */
@@ -347,7 +350,7 @@ char *dirpath(char *dir, char *file)
 	if (!strcmp(dir, ".")
 	 || !dir[0]
 	 || (elvalpha(file[0]) && file[1] == ':')
-	 || !(elvalpha(dir[0]) && dir[1] == ':') && file[0] == '\\')
+	 || (!(elvalpha(dir[0]) && dir[1] == ':') && file[0] == '\\'))
 	{
 		/* no dir, or file has drive letter, or file is absolute within
 		 * drive but dir doesn't specify drive.

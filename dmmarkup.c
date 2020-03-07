@@ -564,7 +564,7 @@ static twrap_t htmlpre(token)
 static twrap_t htmlli(token)
 	TOKEN	*token;
 {
-	CHAR	buf[10];
+	CHAR	buf[21];
 	int	len;
 
 	assert(col == 0);
@@ -1542,7 +1542,7 @@ static MARK htmltagload(tagname, from)
 		&& !CHARcmp(o_filename(markbuffer(from)), toCHAR(filename))))
 	{
 		/* in same buffer */
-		marktmp(retmark, markbuffer(from), 0);
+		(void)marktmp(retmark, markbuffer(from), 0);
 	}
 	else if (from && o_filename(markbuffer(from)) && !hasprotocol
 	 && (elvalpha(*filename) || *filename == '.' || *filename == '/' /*!!!*/
@@ -1584,12 +1584,12 @@ static MARK htmltagload(tagname, from)
 			sprintf(tmp, "%s%s", inherit, filename);
 		else
 			sprintf(tmp, "%s/%s", inherit, filename);
-		marktmp(retmark, bufload(NULL, tmp, ElvFalse), 0);
+		(void)marktmp(retmark, bufload(NULL, tmp, ElvFalse), 0);
 		safefree(tmp);
 	}
 	else
 	{
-		marktmp(retmark, bufload(NULL, filename, ElvFalse), 0);
+		(void)marktmp(retmark, bufload(NULL, filename, ElvFalse), 0);
 	}
 	safefree(fnfree);
 	if (!markbuffer(&retmark) || o_bufchars(markbuffer(&retmark)) == 0)
@@ -2835,7 +2835,7 @@ static twrap_t texoutput(token)
 static twrap_t texitem(token)
 	TOKEN	*token;
 {
-	CHAR	buf[10];
+	CHAR	buf[21];
 	CHAR	*label;
 	int	len;
 	long	offset;
