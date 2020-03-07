@@ -1,7 +1,7 @@
 PROJ = vi
 DEBUG = 0
 CC = gcc
-CFLAGS_D_DEXE = -g -Og -Wall -D "_DEBUG" -D "_DOS" -I "." -I "osmsdos"
+CFLAGS_D_DEXE = -g -Og -fno-omit-frame-pointer -Wall -D "_DEBUG" -D "_DOS" -I "." -I "osmsdos"
 CFLAGS_R_DEXE = -O2 -Wall -D "NDEBUG" -D "_DOS" -I "." -I "osmsdos"
 LFLAGS_D_DEXE = -g
 LFLAGS_R_DEXE = 
